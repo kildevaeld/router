@@ -1,6 +1,4 @@
 import { TypedEventEmitter } from './event-emitter';
-import { Base } from './object';
-
 
 // Cached regex for stripping a leading hash/slash and trailing space.
 const routeStripper = /^[#\/]|\s+$/g,
@@ -10,7 +8,6 @@ const routeStripper = /^[#\/]|\s+$/g,
     trailingSlash = /\/$/,
     // Cached regex for stripping urls of hash and query.
     pathStripper = /[#].*$/;
-
 
 export enum HistoryProvider {
     Fragment = 1, Push, Both
@@ -94,7 +91,7 @@ export class HistoryAPI extends TypedEventEmitter<any> {
     }
     // Start the hash change handling, returning `true` if the current URL matches
     // an existing route, and `false` otherwise.
-    start(options: HistoryOptions = {}) {
+    start() {
         if (this.started) throw new Error("Router.history has already been started");
         this._started = true;
 
@@ -137,9 +134,11 @@ export class HistoryAPI extends TypedEventEmitter<any> {
         switch (kind) {
             case HistoryProvider.Fragment: {
                 if (this.fragment == part) return;
+                break;
             }
             case HistoryProvider.Push: {
                 if (this.path == part) return;
+                break;
             }
         }
 
