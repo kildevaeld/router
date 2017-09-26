@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="css/style.css" rel="stylesheet">
+        <script src="../dist/router.js"></script>
+        
+    </head>
+    <body>
+        <a href="/example">root</a>
+        <a href="#hash">hash</a>
+        <button id="push">push</button>
+
+
+        <script>
+
+
+            let r = new router.Router('/example');
+            console.log(r);
+            /*let h = new router.HistoryAPI({
+                hashChange: true,
+                pushState: true,
+                root: "example"
+            });
+
+            h.on(router.FragmentChangeEvent, (e) => {
+                console.log(e)
+            })
+
+            h.on(router.PathChangeEvent, (args) => {
+                console.log(args)
+            })*/
+           
+            r.history.start();
+
+            document.querySelector('button').onclick = () => {
+                r.history.navigate(2, "hello", {trigger:true, replace:true})
+            }
+
+        </script>
+    </body>
+</html>
