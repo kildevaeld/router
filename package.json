@@ -11,6 +11,7 @@
   "dependencies": {
     "mixins.events": "github:kildevaeld/mixins.events"
   },
+  "typings": "./lib/index.d.ts",
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",

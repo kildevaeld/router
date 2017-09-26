@@ -38,7 +38,7 @@ export class TypedEventEmitter<U> extends EventListener(EventEmitter) implements
         return super.once(name, callback, ctx);
     }
 
-    off<T extends U>(e: EventConstructor<T> | string, callback: TypedEventHandler<T>, ctx?: any) {
+    off<T extends U>(e?: EventConstructor<T> | string, callback?: TypedEventHandler<T>, ctx?: any) {
         let name;
         if (typeof e === 'string') {
             name = e;

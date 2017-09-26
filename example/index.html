@@ -18,7 +18,15 @@
 
 
             let r = new router.Router('/example');
-            console.log(r);
+           
+            r.path('/:hello', (...args) => {
+                console.log(args);
+            })
+
+            r.fragment('hash', (...args) => {
+                console.log(args);
+            })
+            console.log(r)
             /*let h = new router.HistoryAPI({
                 hashChange: true,
                 pushState: true,

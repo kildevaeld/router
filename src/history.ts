@@ -23,11 +23,20 @@ export interface NavigateOptions {
     replace?: boolean;
 }
 
-export class PathChangeEvent {
+export interface IHistoryChangeEvent {
+    kind: HistoryProvider;
+    old: string;
+    value: string;
+}
+
+export class PathChangeEvent implements IHistoryChangeEvent {
+    kind: HistoryProvider = HistoryProvider.Push
     constructor(public old: string, public value: string) { }
 }
 
-export class FragmentChangeEvent extends PathChangeEvent { }
+export class FragmentChangeEvent extends PathChangeEvent {
+    kind: HistoryProvider = HistoryProvider.Fragment
+ }
 
 
 
@@ -46,34 +55,6 @@ export class HistoryAPI extends TypedEventEmitter<any> {
 
     get atRoot() {
         return this.location.pathname.replace(/[^\/]$/, '$&/') === this.root;
-    }
-
-    // Gets the true hash value. Cannot use location.hash directly due to bug
-    // in Firefox where location.hash will always be decoded.
-    getHash(window?: Window) {
-        var match = (window! || this).location.href.match(/#(.*)$/);
-        return match ? match[1] : '';
-    }
-
-    // Get the cross-browser normalized URL fragment, either from the URL,
-    // the hash, or the override.
-    getFragment(fragment: string | HistoryProvider.Fragment | HistoryProvider.Push, _: boolean = false) {
-        if (typeof fragment === 'string') {
-            return fragment.replace(routeStripper, '');
-        }
-
-        switch (fragment) {
-            case HistoryProvider.Fragment:
-                return this.getHash();
-            case HistoryProvider.Push: {
-                let fragment = decodeURI(this.location.pathname + this.location.search);
-                var root = this.root.replace(trailingSlash, '');
-                if (!fragment.indexOf(root)) fragment = fragment.slice(root.length);
-                return fragment;
-            }
-            default:
-                throw new TypeError("fragment should a string or number");
-        }
     }
 
 
@@ -112,6 +93,18 @@ export class HistoryAPI extends TypedEventEmitter<any> {
         }
 
         this.checkUrl(HistoryProvider.Both);
+    }
+
+    stop() {
+        if (!this.started) return;
+
+        if (this.options.hashChange)
+            window.removeEventListener('hashchange', this.checkUrlFragment);
+        if (this.options.pushState)
+            window.removeEventListener('popstate', this.checkPushUrl);
+
+        this._started = false;
+
     }
 
 
@@ -160,17 +153,46 @@ export class HistoryAPI extends TypedEventEmitter<any> {
     }
 
 
-    checkUrlFragment() {
+    // Gets the true hash value. Cannot use location.hash directly due to bug
+    // in Firefox where location.hash will always be decoded.
+    getHash(window?: Window) {
+        var match = (window! || this).location.href.match(/#(.*)$/);
+        return match ? match[1] : '';
+    }
+
+    // Get the cross-browser normalized URL fragment, either from the URL,
+    // the hash, or the override.
+    getFragment(fragment: string | HistoryProvider.Fragment | HistoryProvider.Push, _: boolean = false) {
+        if (typeof fragment === 'string') {
+            return fragment.replace(routeStripper, '');
+        }
+
+        switch (fragment) {
+            case HistoryProvider.Fragment:
+                return this.getHash();
+            case HistoryProvider.Push: {
+                let fragment = decodeURI(this.location.pathname + this.location.search);
+                var root = this.root.replace(trailingSlash, '');
+                if (!fragment.indexOf(root)) fragment = fragment.slice(root.length);
+                return fragment;
+            }
+            default:
+                throw new TypeError("fragment should a string or number");
+        }
+    }
+
+
+    private checkUrlFragment() {
         this.checkUrl(HistoryProvider.Fragment)
     }
 
-    checkPushUrl() {
+    private checkPushUrl() {
         this.checkUrl(HistoryProvider.Push);
     }
 
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`.
-    checkUrl(part: HistoryProvider) {
+    protected checkUrl(part: HistoryProvider) {
 
         const { Both, Push, Fragment } = HistoryProvider;
 
@@ -209,5 +231,10 @@ export class HistoryAPI extends TypedEventEmitter<any> {
             // Some browsers require that `hash` contains a leading #.
             location.hash = '#' + fragment;
         }
+    }
+
+    destroy() {
+        this.off();
+        this.stop();
     }
 } 
