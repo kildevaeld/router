@@ -12,12 +12,12 @@ function isRegExp(value: any): value is RegExp {
     return value ? (typeof value === 'object' && toString.call(value) === '[object RegExp]') : false;
 };
 
-function isRouteHandler(a:any): a is RouteHandler {
+function isRouteHandler(a: any): a is RouteHandler {
     return typeof a === 'function';
 }
 
 
-export type RouteHandler = (event: IHistoryChangeEvent, ...args:string[]) => (boolean | void);
+export type RouteHandler = (event: IHistoryChangeEvent, ...args: string[]) => (boolean | void);
 
 interface Route {
     route: RegExp;
@@ -31,8 +31,7 @@ export class Router extends EventListener(EventEmitter) implements IEventListene
     private _routes: Route[] = [];
 
     constructor(
-        root: string = "/",
-        public readonly history: HistoryAPI = new HistoryAPI({ pushState: true, hashChange: true, root: root })
+        public readonly history: HistoryAPI
     ) {
         super()
 
@@ -42,15 +41,15 @@ export class Router extends EventListener(EventEmitter) implements IEventListene
     }
 
 
-    path(path:string|RegExp, name: string | RouteHandler, handler?: RouteHandler) {
+    path(path: string | RegExp, name: string | RouteHandler, handler?: RouteHandler) {
         return this.route(HistoryProvider.Push, path, name, handler);
     }
 
-    fragment(hash:string|RegExp, name: string | RouteHandler, handler?: RouteHandler) {
-       return this.route(HistoryProvider.Fragment, hash, name, handler);
+    fragment(hash: string | RegExp, name: string | RouteHandler, handler?: RouteHandler) {
+        return this.route(HistoryProvider.Fragment, hash, name, handler);
     }
 
-    route(kind: HistoryProvider, route:string|RegExp, name: string | RouteHandler, handler?: RouteHandler) {
+    route(kind: HistoryProvider, route: string | RegExp, name: string | RouteHandler, handler?: RouteHandler) {
         if (!isRegExp(route)) route = this._routeToRegExp(<string>route);
         if (isRouteHandler(name)) {
             handler = <RouteHandler>name;
@@ -82,8 +81,8 @@ export class Router extends EventListener(EventEmitter) implements IEventListene
         }
     }
 
-    
-    
+
+
     // Convert a route string into a regular expression, suitable for matching
     // against the current location hash.
     private _routeToRegExp(route: string): RegExp {
@@ -100,7 +99,7 @@ export class Router extends EventListener(EventEmitter) implements IEventListene
     // extracted decoded parameters. Empty or unmatched parameters will be
     // treated as `null` to normalize cross-browser behavior.
     protected _extractParameters(route: RegExp, fragment: string): string[] {
-        var params = (route.exec(fragment)!||[]).slice(1);
+        var params = (route.exec(fragment)! || []).slice(1);
         return params.map(function (param, i) {
             // Don't decode the search params.
             if (i === params.length - 1) return param || null;

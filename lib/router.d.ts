@@ -6,7 +6,7 @@ declare const Router_base: (new (...args: any[]) => IEventListener) & typeof Eve
 export declare class Router extends Router_base implements IEventListener {
     readonly history: HistoryAPI;
     private _routes;
-    constructor(root?: string, history?: HistoryAPI);
+    constructor(history: HistoryAPI);
     path(path: string | RegExp, name: string | RouteHandler, handler?: RouteHandler): this;
     fragment(hash: string | RegExp, name: string | RouteHandler, handler?: RouteHandler): this;
     route(kind: HistoryProvider, route: string | RegExp, name: string | RouteHandler, handler?: RouteHandler): this;

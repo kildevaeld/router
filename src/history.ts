@@ -36,7 +36,7 @@ export class PathChangeEvent implements IHistoryChangeEvent {
 
 export class FragmentChangeEvent extends PathChangeEvent {
     kind: HistoryProvider = HistoryProvider.Fragment
- }
+}
 
 
 
