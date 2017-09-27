@@ -1,7 +1,7 @@
 import { EventEmitter } from './event-emitter';
 import { EventListener, IEventListener } from 'mixins.events';
 import { HistoryAPI, IHistoryChangeEvent, FragmentChangeEvent, PathChangeEvent, HistoryProvider } from './history';
-
+import {autoinject} from 'slick-di';
 
 const optionalParam = /\((.*?)\)/g,
     namedParam = /(\(\?)?:\w+/g,
@@ -26,6 +26,7 @@ interface Route {
     kind: HistoryProvider
 }
 
+@autoinject
 export class Router extends EventListener(EventEmitter) implements IEventListener {
 
     private _routes: Route[] = [];

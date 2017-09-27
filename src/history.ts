@@ -1,5 +1,5 @@
 import { TypedEventEmitter } from './event-emitter';
-
+import {singleton} from 'slick-di'
 // Cached regex for stripping a leading hash/slash and trailing space.
 const routeStripper = /^[#\/]|\s+$/g,
     // Cached regex for stripping leading and trailing slashes.
@@ -40,6 +40,7 @@ export class FragmentChangeEvent extends PathChangeEvent {
 
 
 
+@singleton()
 export class HistoryAPI extends TypedEventEmitter<any> {
     public history: History
     private location: Location;

@@ -1,6 +1,6 @@
 {
   "name": "router",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -9,7 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mixins.events": "github:kildevaeld/mixins.events"
+    "mixins.events": "github:kildevaeld/mixins.events",
+    "slick-di": "github:slickjs/slick-di"
   },
   "typings": "./lib/index.d.ts",
   "devDependencies": {
